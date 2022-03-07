@@ -6,8 +6,6 @@ class EmojiInput extends HTMLElement {
 
         this.contentEditable = true;
 
-        this.textContent = "Hello, World!";
-
         let styles = ``;
         
         const input = document.createElement("input");
@@ -52,9 +50,9 @@ class EmojiInput extends HTMLElement {
         head.prepend(style);
     }
     insertEmoji(emoji) {
-        const caret = getCaret(this) || this.innerHTML.length;
+        const caret = (getCaret(this) || [this.innerHTML.length])[0] - 1;
 
-        this.innerHTML = `${this.innerHTML.substring(0, caret)}<img src="${emoji}">${caret < this.innerHTML.length ? this.innerHTML.substring(caret) : ""}`;
+        this.innerHTML = `${this.innerHTML.substring(0, caret)}<img src="${emoji}" height="${+window.getComputedStyle(this).getPropertyValue("font-size").slice(0, -2) - 2}">${caret < this.innerHTML.length ? this.innerHTML.substring(caret) : ""}`;
     }
 }
 
