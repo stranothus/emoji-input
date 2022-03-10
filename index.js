@@ -1,6 +1,10 @@
 import getCaret from "./getCaret.js";
 
 class EmojiInput extends HTMLElement {
+    emojis = {};
+    list = document.createElement("div");
+    lastCaret = 0;
+
     constructor() {
         super();
 
@@ -50,9 +54,46 @@ class EmojiInput extends HTMLElement {
         head.prepend(style);
     }
     insertEmoji(emoji) {
-        const caret = (getCaret(this) || [this.innerHTML.length])[0] - 1;
+        const caret = (getCaret(this) || [this.innerHTML.length])[0] || this.lastCaret;
+        emoji = this.emojis[emoji] || emoji;
+        const insert = `<img src="${emoji}" height="${+window.getComputedStyle(this).getPropertyValue("font-size").slice(0, -2) - 2}">`;
 
-        this.innerHTML = `${this.innerHTML.substring(0, caret)}<img src="${emoji}" height="${+window.getComputedStyle(this).getPropertyValue("font-size").slice(0, -2) - 2}">${caret < this.innerHTML.length ? this.innerHTML.substring(caret) : ""}`;
+        this.innerHTML = `${this.innerHTML.substring(0, caret)}${insert} ${caret < this.innerHTML.length ? this.innerHTML.substring(caret) : ""}`;
+    }
+    addEmoji(name, emoji) {
+        this.emojis[name] = emoji.replace(/\s/g, "");
+
+        const button = document.createElement("button");
+        button.textContent = name;
+        button.onclick = () => {
+            const caret = (getCaret(this) || [this.innerHTML.length])[0] || this.lastCaret;
+            const replace = this.innerHTML.substring(0, caret).match(/:\S*$/)[0];
+            const newText = this.innerHTML.substring(0, caret).replace(/:\S*$/, "");
+
+            this.innerHTML = newText + this.innerHTML.substring(caret);
+
+            this.lastCaret = newText.length;
+
+            this.insertEmoji(name);
+
+            this.parentElement.removeChild(this.list);
+        };
+
+        this.list.appendChild(button);
+    }
+    connectedCallback() {
+        this.addEventListener("keyup", event => {
+            const caret = (getCaret(this) || [this.innerHTML.length])[0] - 1;
+            const untilNow = this.innerHTML.substring(0, caret);
+            
+            if(/:\S*$/.test(untilNow)) {
+                if(!document.contains(this.list)) this.before(this.list);
+            } else {
+                if(this.parentElement.contains(this.list)) this.parentElement.removeChild(this.list);
+            }
+
+            this.lastCaret = caret + 1;
+        });
     }
 }
 
