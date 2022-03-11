@@ -89,6 +89,16 @@ class EmojiInput extends HTMLElement {
             
             if(/:\S*$/.test(untilNow)) {
                 if(!document.contains(this.list)) this.before(this.list);
+
+                const substring = untilNow.match(/:\S*$/)[0].replace(/^:/, "");
+
+                this.list.childNodes.forEach(v => {
+                    if(v.textContent.toLowerCase().indexOf(substring.toLowerCase()) + 1) {
+                        v.style.display = "block";
+                    } else {
+                        v.style.display = "none";
+                    }
+                })
             } else {
                 if(this.parentElement.contains(this.list)) this.parentElement.removeChild(this.list);
             }

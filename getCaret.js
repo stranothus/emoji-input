@@ -51,8 +51,6 @@ function getCaret(elem) {
         innerHTML = innerHTML.substring(replace.length);
     }
 
-    console.log(length);
-
     return "" + length;
 }
 
