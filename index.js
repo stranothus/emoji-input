@@ -54,7 +54,7 @@ class EmojiInput extends HTMLElement {
         head.prepend(style);
     }
     insertEmoji(emoji) {
-        const caret = (getCaret(this) || [this.innerHTML.length])[0] || this.lastCaret;
+        const caret = +(getCaret(this) || this.lastCaret || this.innerHTML.length);
         emoji = this.emojis[emoji] || emoji;
         const insert = `<img src="${emoji}" height="${+window.getComputedStyle(this).getPropertyValue("font-size").slice(0, -2) - 2}">`;
 
@@ -66,13 +66,14 @@ class EmojiInput extends HTMLElement {
         const button = document.createElement("button");
         button.textContent = name;
         button.onclick = () => {
-            const caret = (getCaret(this) || [this.innerHTML.length])[0] || this.lastCaret;
+            const caret = +(getCaret(this) || this.lastCaret || this.innerHTML.length);
             const replace = this.innerHTML.substring(0, caret).match(/:\S*$/)[0];
             const newText = this.innerHTML.substring(0, caret).replace(/:\S*$/, "");
 
             this.innerHTML = newText + this.innerHTML.substring(caret);
 
             this.lastCaret = newText.length;
+            button.blur();
 
             this.insertEmoji(name);
 
@@ -83,7 +84,7 @@ class EmojiInput extends HTMLElement {
     }
     connectedCallback() {
         this.addEventListener("keyup", event => {
-            const caret = (getCaret(this) || [this.innerHTML.length])[0] - 1;
+            const caret = +(getCaret(this) || this.lastCaret || this.innerHTML.length);
             const untilNow = this.innerHTML.substring(0, caret);
             
             if(/:\S*$/.test(untilNow)) {

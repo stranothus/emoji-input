@@ -39,9 +39,21 @@ function getCaret(elem) {
         }
     }
 
-    if(cum_length[0] <= cum_length[1]) return cum_length;
+    let length = 0;
+    let innerHTML = String(elem.innerHTML);
 
-    return [cum_length[1], cum_length[0]];
+    for(let i = 0; i < cum_length[1]; i++) {
+        const char = innerHTML[0] + "";
+        const replace = char === "<" ? innerHTML.match(/^<[^>]+>|$/)[0] + " " : char === "&" ? innerHTML.match(/^&[^;]+;|$/)[0] : char;
+
+        length += replace.length;
+
+        innerHTML = innerHTML.substring(replace.length);
+    }
+
+    console.log(length);
+
+    return "" + length;
 }
 
 export default getCaret;
