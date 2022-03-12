@@ -64,7 +64,7 @@ class EmojiInput extends HTMLElement {
         this.emojis[name] = emoji.replace(/\s/g, "");
 
         const button = document.createElement("button");
-        button.textContent = name;
+        button.innerHTML = `${name} <img src="${emoji}" height="${+window.getComputedStyle(this).getPropertyValue("font-size").slice(0, -2) - 2}">`;
         button.onclick = () => {
             const caret = +(getCaret(this) || this.lastCaret || this.innerHTML.length);
             const replace = this.innerHTML.substring(0, caret).match(/:\S*$/)[0];
