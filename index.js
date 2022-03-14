@@ -87,7 +87,7 @@ class EmojiInput extends HTMLElement {
             const caret = +(getCaret(this) || this.lastCaret || this.innerHTML.length);
             const untilNow = this.innerHTML.substring(0, caret);
             
-            if(/:\S*$/.test(untilNow)) {
+            if(/:\S*$/.test(untilNow) && !/:\S*:/.test(untilNow)) {
                 if(!document.contains(this.list)) this.before(this.list);
 
                 const substring = untilNow.match(/:\S*$/)[0].replace(/^:/, "");
@@ -98,9 +98,24 @@ class EmojiInput extends HTMLElement {
                     } else {
                         v.style.display = "none";
                     }
-                })
+                });
             } else {
                 if(this.parentElement.contains(this.list)) this.parentElement.removeChild(this.list);
+
+                if(/:\S*:/.test(untilNow)) {
+                    const substring = untilNow.match(/:\S*$/)[0].replace(/:/g, "");
+                    const matches = [...this.list.childNodes].filter(v => v.textContent.toLowerCase().trim() === substring.toLowerCase().trim());
+
+                    if(!matches?.length) return;
+
+                    const newText = this.innerHTML.substring(0, caret).replace(/:\S*$/, "");
+                    this.innerHTML = newText + this.innerHTML.substring(caret);
+                    this.lastCaret = newText.length;
+
+                    this.insertEmoji(substring);
+
+                    this.blur();
+                }
             }
 
             this.lastCaret = caret + 1;
