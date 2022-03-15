@@ -9,6 +9,7 @@ class EmojiInput extends HTMLElement {
         super();
 
         this.contentEditable = true;
+        this.list.classList.add("emoji-input-list");
 
         let styles = ``;
         
@@ -87,7 +88,7 @@ class EmojiInput extends HTMLElement {
             const caret = +(getCaret(this) || this.lastCaret || this.innerHTML.length);
             const untilNow = this.innerHTML.substring(0, caret);
             
-            if(/:\S*$/.test(untilNow) && !/:\S*:/.test(untilNow)) {
+            if(/:\S*$/.test(untilNow) && !/:\S*:/.test(untilNow) && this.getAttribute("list") !== "false") {
                 if(!document.contains(this.list)) this.before(this.list);
 
                 const substring = untilNow.match(/:\S*$/)[0].replace(/^:/, "");
