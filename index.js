@@ -87,8 +87,9 @@ class EmojiInput extends HTMLElement {
         this.addEventListener("keyup", event => {
             const caret = +(getCaret(this) || this.lastCaret || this.innerHTML.length);
             const untilNow = this.innerHTML.substring(0, caret);
+            const possibilities = ["true", "on", "add", "include"];
             
-            if(/:\S*$/.test(untilNow) && !/:\S*:/.test(untilNow) && this.getAttribute("list") !== "false") {
+            if(/:\S*$/.test(untilNow) && !/:\S*:/.test(untilNow) && possibilities.includes(this.getAttribute("list"))) {
                 if(!document.contains(this.list)) this.before(this.list);
 
                 const substring = untilNow.match(/:\S*$/)[0].replace(/^:/, "");
